@@ -2,9 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>datawave-microservice-parent</artifactId>
         <groupId>gov.nsa.datawave.microservice</groupId>
-        <version>1.5</version>
+        <artifactId>datawave-microservice-parent</artifactId>
+        <version>1.7</version>
         <relativePath />
     </parent>
     <artifactId>common-utils</artifactId>
@@ -22,6 +22,7 @@
         <url>https://github.com/NationalSecurityAgency/datawave-common-utils</url>
     </scm>
     <properties>
+        <spotbugs.excludes.file>${project.basedir}/src/main/spotbugs/excludes.xml</spotbugs.excludes.file>
         <!-- Guava 15 is needed for Accumulo on the tservers -->
         <version.guava>15.0</version.guava>
     </properties>
