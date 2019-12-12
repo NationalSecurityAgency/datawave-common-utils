@@ -4,19 +4,16 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-/**
- * 
- */
 public class StringUtilsTest {
     
     @Test
@@ -34,7 +31,7 @@ public class StringUtilsTest {
     }
     
     private void verify(String str, String[] expected, String[] utils) {
-        assertEquals("Wrong length ('" + str + "') : expected " + Arrays.asList(expected) + " but got " + Arrays.asList(utils), expected.length, utils.length);
+        assertEquals(expected.length, utils.length, "Wrong length ('" + str + "') : expected " + Arrays.asList(expected) + " but got " + Arrays.asList(utils));
         for (int j = 0; j < expected.length; j++) {
             assertEquals(expected[j], utils[j]);
         }
@@ -74,15 +71,15 @@ public class StringUtilsTest {
             }
             
             if (StringUtils.isEscapeRequired(c)) {
-                assertFalse("Expected " + c + " to not split as a single character regex", parsedAsSingleChar);
+                assertFalse(parsedAsSingleChar, "Expected " + c + " to not split as a single character regex");
             } else {
-                assertTrue("Expected " + c + " to split as a single character regex", parsedAsSingleChar);
+                assertTrue(parsedAsSingleChar, "Expected " + c + " to split as a single character regex");
             }
             
             if (StringUtils.isEscapableLiteral(c)) {
-                assertTrue("Expected " + (int) c + " to split as an escaped character regex", parsedAsEscapedChar);
+                assertTrue(parsedAsEscapedChar, "Expected " + (int) c + " to split as an escaped character regex");
             } else {
-                assertFalse("Expected " + (int) c + " to not split as an escaped character regex", parsedAsEscapedChar);
+                assertFalse(parsedAsEscapedChar, "Expected " + (int) c + " to not split as an escaped character regex");
             }
         }
     }
@@ -99,10 +96,10 @@ public class StringUtilsTest {
             
             if (StringUtils.isEscapeRequired(c)) {
                 String[] splits = StringUtils.split(value, "\\" + String.valueOf(c));
-                assertEquals("Failed to split " + value, Arrays.asList(expected), Arrays.asList(splits));
+                assertEquals(Arrays.asList(expected), Arrays.asList(splits), "Failed to split " + value);
             } else {
                 String[] splits = StringUtils.split(value, String.valueOf(c));
-                assertEquals("Failed to split " + value, Arrays.asList(expected), Arrays.asList(splits));
+                assertEquals(Arrays.asList(expected), Arrays.asList(splits), "Failed to split " + value);
             }
         }
     }
@@ -171,8 +168,8 @@ public class StringUtilsTest {
         strings = StringUtils.deDupStringArray(strings);
         Set<String> stringsSet = new HashSet<>(Arrays.asList(strings));
         Set<String> stringsNoSupSet = new HashSet<>(Arrays.asList(stringsNoDups));
-        assertEquals("String array was not deduped. Expected: " + Arrays.asList(stringsNoDups) + " But have: " + Arrays.asList(strings) + ".", stringsSet,
-                        stringsNoSupSet);
+        assertEquals(stringsSet, stringsNoSupSet,
+                        "String array was not deduped. Expected: " + Arrays.asList(stringsNoDups) + " But have: " + Arrays.asList(strings) + ".");
         
         // Check null array
         strings = null;
@@ -185,15 +182,15 @@ public class StringUtilsTest {
         // Check array with empty strings
         strings = new String[] {"", "string 1", ""};
         String[] deDupedStrings = StringUtils.deDupStringArray(strings);
-        assertEquals("String array with empty string was not deduped. Expected: " + Arrays.asList(deDupedStrings) + " But have: " + Arrays.asList(strings)
-                        + ".", strings.length - 1, deDupedStrings.length);
+        assertEquals(strings.length - 1, deDupedStrings.length, "String array with empty string was not deduped. Expected: " + Arrays.asList(deDupedStrings)
+                        + " But have: " + Arrays.asList(strings) + ".");
         
         // Check array with string that only have case differences
         String[] stringsWithCaseDifferences = new String[] {"string 1", "string 2", "String 2"};
         deDupedStrings = StringUtils.deDupStringArray(stringsWithCaseDifferences);
-        assertEquals("String array with strings that only have case differences should not have been deduped. Expected: "
-                        + Arrays.asList(stringsWithCaseDifferences) + " But have: " + Arrays.asList(deDupedStrings) + ".", stringsWithCaseDifferences.length,
-                        deDupedStrings.length);
+        assertEquals(stringsWithCaseDifferences.length, deDupedStrings.length,
+                        "String array with strings that only have case differences should not have been deduped. Expected: "
+                                        + Arrays.asList(stringsWithCaseDifferences) + " But have: " + Arrays.asList(deDupedStrings) + ".");
     }
     
     @Test
