@@ -25,6 +25,8 @@
     <properties>
         <spotbugs.excludes.file>${project.basedir}/src/main/spotbugs/excludes.xml</spotbugs.excludes.file>
         <version.guava>28.1-jre</version.guava>
+        <version.microservice.accumulo-utils>1.4-SNAPSHOT</version.microservice.accumulo-utils>
+        <version.spring-security-core>5.4.5</version.spring-security-core>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -33,12 +35,31 @@
                 <artifactId>guava</artifactId>
                 <version>${version.guava}</version>
             </dependency>
+            <dependency>
+                <groupId>gov.nsa.datawave.microservice</groupId>
+                <artifactId>accumulo-utils</artifactId>
+                <version>${version.microservice.accumulo-utils}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-core</artifactId>
+                <version>${version.spring-security-core}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>gov.nsa.datawave.microservice</groupId>
+            <artifactId>accumulo-utils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
