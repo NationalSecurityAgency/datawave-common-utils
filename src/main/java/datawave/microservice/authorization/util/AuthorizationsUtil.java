@@ -67,9 +67,9 @@ public class AuthorizationsUtil {
     
     /**
      * Retrieves a set of "downgraded" authorizations. This retrieves all authorizations from {@code principal} and intersects the user auths (the
-     * authorizations retrieved from {@code principal} for {@link ProxiedUserDetails#getPrimaryUser().getDn())}) with {@code requestedAuths}. All other entity
-     * auths retrieved from {@code principal}, if any, are included in the result set as is. If {@code requestedAuths} contains any authorizations that are not
-     * in the user auths list, then an {@link IllegalArgumentException} is thrown.
+     * authorizations retrieved from {@code principal} for {@link ProxiedUserDetails#getPrimaryUser()}) with {@code requestedAuths}. All other entity auths
+     * retrieved from {@code principal}, if any, are included in the result set as is. If {@code requestedAuths} contains any authorizations that are not in the
+     * user auths list, then an {@link IllegalArgumentException} is thrown.
      *
      * @param requestedAuths
      *            The auths to use for the user's auths. If this list contains any that are not owned by the user, an {@link IllegalArgumentException} is
