@@ -54,8 +54,6 @@ public class DateHelper {
      * Return a string representing the given date in the given pattern in a consistent way not dependent on local settings for calendar, timezone, or locale by
      * using Zulu timezone and US locale
      *
-     * @author bmhill3
-     *
      * @param date
      * @param pattern
      * @return The formatted custom date
@@ -67,8 +65,6 @@ public class DateHelper {
     /**
      * Return a string representing the given date in the given pattern in a consistent way not dependent on local settings for calendar, timezone, or locale by
      * using Zulu timezone and US locale
-     *
-     * @author bmhill3
      *
      * @param inMillis
      * @param pattern
@@ -247,8 +243,6 @@ public class DateHelper {
     /**
      * Converts a string in a custom format to a Date object in a consistent way not dependent on local settings for calendar, timezone, or locale by using Zulu
      * timezone and US locale.
-     *
-     * @author bmhill3
      *
      * @param date
      * @param pattern
@@ -502,8 +496,6 @@ public class DateHelper {
 
     /**
      * Custom Exception for when DateHelper cannot parse a given date within Datawave
-     *
-     * @author BHillenbrand722
      */
     public static class DatawaveDateTimeParseException extends Exception {
         public DatawaveDateTimeParseException(String msg) {
