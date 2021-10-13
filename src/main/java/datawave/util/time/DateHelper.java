@@ -186,7 +186,7 @@ public class DateHelper {
     }
     
     /**
-     * Return a string representing the given date in EEE MM d HH:mm:ss zzz yyyy format in a consistent way not dependent on local settings for calendar,
+     * Return a string representing the given date in yyyy-MM-dd'T'HH:mm:ss.SSSZ format in a consistent way not dependent on local settings for calendar,
      * timezone, or locale by using Zulu timezone and US locale.
      *
      * @param inMillis
