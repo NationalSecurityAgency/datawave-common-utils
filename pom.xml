@@ -25,7 +25,7 @@
     <properties>
         <spotbugs.excludes.file>${project.basedir}/src/main/spotbugs/excludes.xml</spotbugs.excludes.file>
         <version.guava>28.1-jre</version.guava>
-        <version.microservice.accumulo-utils>1.4-SNAPSHOT</version.microservice.accumulo-utils>
+        <version.microservice.accumulo-utils>1.5-SNAPSHOT</version.microservice.accumulo-utils>
         <version.spring-security-core>5.4.5</version.spring-security-core>
     </properties>
     <dependencyManagement>
