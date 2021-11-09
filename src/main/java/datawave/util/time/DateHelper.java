@@ -300,8 +300,8 @@ public class DateHelper {
             } else {
                 return Date.from(LocalDate.parse(lenientDate, parser).atStartOfDay(parser.getZone()).toInstant()); // Fails testFailIfMissingDigits test
             }
-        } catch (DatawaveDateTimeParseException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
         }
     }
     
