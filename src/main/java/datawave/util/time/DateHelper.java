@@ -293,16 +293,12 @@ public class DateHelper {
      * Only use this for formats that can allow for leniency (i.e. not ISO standard formats).
      */
     private static Date lenientParseHelper(String date, DateTimeFormatter parser, String formatStr, boolean hasTime) {
-        try {
             String lenientDate = convertToLenient(date, formatStr);
             if (hasTime) {
                 return Date.from(ZonedDateTime.parse(lenientDate, parser).toInstant());
             } else {
                 return Date.from(LocalDate.parse(lenientDate, parser).atStartOfDay(parser.getZone()).toInstant()); // Fails testFailIfMissingDigits test
             }
-        } catch (Exception e) {
-            log.error("Error: " + e.getMessage());
-        }
     }
     
     /*
@@ -491,18 +487,5 @@ public class DateHelper {
             throw new IllegalArgumentException("Hour must be a number of 0 through 23.");
         }
         return date.toInstant().atZone(ZoneOffset.UTC).get(ChronoField.HOUR_OF_DAY) == hour;
-    }
-    
-    /**
-     * Custom Exception for when DateHelper cannot parse a given date within Datawave
-     */
-    public static class DatawaveDateTimeParseException extends Exception {
-        public DatawaveDateTimeParseException(String msg) {
-            super(msg);
-        }
-        
-        public DatawaveDateTimeParseException(String msg, Throwable cause) {
-            super(msg, cause);
-        }
     }
 }
