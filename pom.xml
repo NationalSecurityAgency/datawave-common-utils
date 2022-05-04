@@ -24,9 +24,7 @@
     </scm>
     <properties>
         <spotbugs.excludes.file>${project.basedir}/src/main/spotbugs/excludes.xml</spotbugs.excludes.file>
-        <version.guava>28.1-jre</version.guava>
         <version.microservice.accumulo-utils>1.5-SNAPSHOT</version.microservice.accumulo-utils>
-        <version.spring-security-core>5.4.5</version.spring-security-core>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -40,22 +38,6 @@
                 <artifactId>accumulo-utils</artifactId>
                 <version>${version.microservice.accumulo-utils}</version>
             </dependency>
-            <dependency>
-                <groupId>jakarta.xml.bind</groupId>
-                <artifactId>jakarta.xml.bind-api</artifactId>
-                <version>${version.jakarta.xml.bind}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-core</artifactId>
-                <version>${version.spring-security-core}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.xml.bind</groupId>
-                <artifactId>jaxb-impl</artifactId>
-                <version>${version.sun.xml.bind}</version>
-                <scope>runtime</scope>
-            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
@@ -68,9 +50,12 @@
             <artifactId>accumulo-utils</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
