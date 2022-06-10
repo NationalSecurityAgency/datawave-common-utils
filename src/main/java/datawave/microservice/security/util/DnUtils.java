@@ -21,15 +21,15 @@ public class DnUtils {
         this.npeOuList = npeOuList;
     }
     
-    public String[] splitProxiedDNs(String proxiedDNs, boolean allowDups) {
+    public static String[] splitProxiedDNs(String proxiedDNs, boolean allowDups) {
         return ProxiedEntityUtils.splitProxiedDNs(proxiedDNs, allowDups);
     }
     
-    public String[] splitProxiedSubjectIssuerDNs(String proxiedDNs) {
+    public static String[] splitProxiedSubjectIssuerDNs(String proxiedDNs) {
         return ProxiedEntityUtils.splitProxiedSubjectIssuerDNs(proxiedDNs);
     }
     
-    public String buildProxiedDN(String... dns) {
+    public static String buildProxiedDN(String... dns) {
         return ProxiedEntityUtils.buildProxiedDN(dns);
     }
     
@@ -78,15 +78,15 @@ public class DnUtils {
         return sb.toString();
     }
     
-    public String getCommonName(String dn) {
+    public static String getCommonName(String dn) {
         return ProxiedEntityUtils.getCommonName(dn);
     }
     
-    public String[] getOrganizationalUnits(String dn) {
+    public static String[] getOrganizationalUnits(String dn) {
         return ProxiedEntityUtils.getOrganizationalUnits(dn);
     }
     
-    public String getShortName(String dn) {
+    public static String getShortName(String dn) {
         return ProxiedEntityUtils.getShortName(dn);
     }
     
@@ -114,7 +114,7 @@ public class DnUtils {
         return ProxiedEntityUtils.getComponents(dn, componentName);
     }
     
-    public String normalizeDN(String userName) {
+    public static String normalizeDN(String userName) {
         return ProxiedEntityUtils.normalizeDN(userName);
     }
     
