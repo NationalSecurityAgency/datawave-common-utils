@@ -40,6 +40,18 @@ public class ProxiedUserDetails implements UserDetails {
         return Collections.unmodifiableCollection(proxiedUsers);
     }
     
+    public List<String> getProxyServers() {
+        // @formatter:off
+        List<String> proxyServers = orderProxiedUsers(this.proxiedUsers).stream()
+                .filter(u -> u.getUserType() == UserType.SERVER)
+                .filter(u -> !u.equals(this.getPrimaryUser()))
+                .map(DatawaveUser::getDn)
+                .map(SubjectIssuerDNPair::subjectDN)
+                .collect(Collectors.toList());
+        // @formatter:on
+        return proxyServers.isEmpty() ? null : proxyServers;
+    }
+    
     /**
      * Gets the {@link DatawaveUser} that represents the primary user in this ProxiedUserDetails. If there is only one DatawaveUser, then it is the primaryUser.
      * If there is more than one DatawaveUser, then the first (and presumably only) DatawaveUser whose {@link DatawaveUser#getUserType()} is
