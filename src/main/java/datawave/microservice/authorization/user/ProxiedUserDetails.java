@@ -5,13 +5,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import datawave.security.authorization.DatawaveUser;
 import datawave.security.authorization.DatawaveUser.UserType;
+import datawave.security.authorization.ProxiedDatawaveUser;
 import datawave.security.authorization.SubjectIssuerDNPair;
+import datawave.security.util.ProxiedEntityUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +24,7 @@ import java.util.stream.Collectors;
  * server user represents the entity that made the call to us, but the user is the actual end user.
  */
 @XmlRootElement
-public class ProxiedUserDetails implements UserDetails {
+public class ProxiedUserDetails implements ProxiedDatawaveUser, UserDetails {
     private String username;
     private List<DatawaveUser> proxiedUsers = new ArrayList<>();
     private List<SimpleGrantedAuthority> roles;
@@ -36,10 +38,12 @@ public class ProxiedUserDetails implements UserDetails {
         this.creationTime = creationTime;
     }
     
+    @Override
     public Collection<? extends DatawaveUser> getProxiedUsers() {
         return Collections.unmodifiableCollection(proxiedUsers);
     }
     
+    @Override
     public List<String> getProxyServers() {
         // @formatter:off
         List<String> proxyServers = orderProxiedUsers(this.proxiedUsers).stream()
@@ -52,6 +56,11 @@ public class ProxiedUserDetails implements UserDetails {
         return proxyServers.isEmpty() ? null : proxyServers;
     }
     
+    @Override
+    public String getShortName() {
+        return ProxiedEntityUtils.getShortName(getPrimaryUser().getName());
+    }
+    
     /**
      * Gets the {@link DatawaveUser} that represents the primary user in this ProxiedUserDetails. If there is only one DatawaveUser, then it is the primaryUser.
      * If there is more than one DatawaveUser, then the first (and presumably only) DatawaveUser whose {@link DatawaveUser#getUserType()} is
@@ -60,6 +69,7 @@ public class ProxiedUserDetails implements UserDetails {
      *
      * @return The {@link DatawaveUser} that represents the primary user in the list of proxied users
      */
+    @Override
     @JsonIgnore
     public DatawaveUser getPrimaryUser() {
         return ProxiedUserDetails.findPrimaryUser(this.proxiedUsers);
@@ -103,6 +113,26 @@ public class ProxiedUserDetails implements UserDetails {
             }
         }
         return users;
+    }
+    
+    @Override
+    public Collection<? extends Collection<String>> getAuthorizations() {
+        // @formatter:off
+        return Collections.unmodifiableCollection(
+                ProxiedUserDetails.orderProxiedUsers(this.proxiedUsers).stream()
+                        .map(DatawaveUser::getAuths)
+                        .collect(Collectors.toList()));
+        // @formatter:on
+    }
+    
+    @Override
+    public String[] getDNs() {
+        // @formatter:off
+        return ProxiedUserDetails.orderProxiedUsers(this.proxiedUsers).stream()
+                .map(DatawaveUser::getDn)
+                .map(SubjectIssuerDNPair::subjectDN)
+                .toArray(String[]::new);
+        // @formatter:on
     }
     
     @Override
