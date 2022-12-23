@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import datawave.security.authorization.DatawaveUser;
 import datawave.security.authorization.DatawaveUser.UserType;
-import datawave.security.authorization.ProxiedDatawaveUser;
+import datawave.security.authorization.ProxiedUserDetails;
 import datawave.security.authorization.SubjectIssuerDNPair;
 import datawave.security.util.ProxiedEntityUtils;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,16 +24,16 @@ import java.util.stream.Collectors;
  * server user represents the entity that made the call to us, but the user is the actual end user.
  */
 @XmlRootElement
-public class ProxiedUserDetails implements ProxiedDatawaveUser, UserDetails {
+public class DatawaveUserDetails implements ProxiedUserDetails, UserDetails {
     private String username;
     private List<DatawaveUser> proxiedUsers = new ArrayList<>();
     private List<SimpleGrantedAuthority> roles;
     private long creationTime;
     
     @JsonCreator
-    public ProxiedUserDetails(@JsonProperty("proxiedUsers") Collection<? extends DatawaveUser> proxiedUsers, @JsonProperty("creationTime") long creationTime) {
+    public DatawaveUserDetails(@JsonProperty("proxiedUsers") Collection<? extends DatawaveUser> proxiedUsers, @JsonProperty("creationTime") long creationTime) {
         this.proxiedUsers.addAll(proxiedUsers);
-        this.username = ProxiedUserDetails.orderProxiedUsers(this.proxiedUsers).stream().map(DatawaveUser::getName).collect(Collectors.joining(" -> "));
+        this.username = DatawaveUserDetails.orderProxiedUsers(this.proxiedUsers).stream().map(DatawaveUser::getName).collect(Collectors.joining(" -> "));
         this.roles = getPrimaryUser().getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
         this.creationTime = creationTime;
     }
@@ -72,7 +72,7 @@ public class ProxiedUserDetails implements ProxiedDatawaveUser, UserDetails {
     @Override
     @JsonIgnore
     public DatawaveUser getPrimaryUser() {
-        return ProxiedUserDetails.findPrimaryUser(this.proxiedUsers);
+        return DatawaveUserDetails.findPrimaryUser(this.proxiedUsers);
     }
     
     static protected DatawaveUser findPrimaryUser(List<DatawaveUser> datawaveUsers) {
@@ -104,7 +104,7 @@ public class ProxiedUserDetails implements ProxiedDatawaveUser, UserDetails {
      */
     static protected List<DatawaveUser> orderProxiedUsers(List<DatawaveUser> datawaveUsers) {
         List<DatawaveUser> users = new ArrayList<>();
-        int position = ProxiedUserDetails.findPrimaryUserPosition(datawaveUsers);
+        int position = DatawaveUserDetails.findPrimaryUserPosition(datawaveUsers);
         if (position >= 0) {
             users.add(datawaveUsers.get(position));
             if (datawaveUsers.size() > 1) {
@@ -119,7 +119,7 @@ public class ProxiedUserDetails implements ProxiedDatawaveUser, UserDetails {
     public Collection<? extends Collection<String>> getAuthorizations() {
         // @formatter:off
         return Collections.unmodifiableCollection(
-                ProxiedUserDetails.orderProxiedUsers(this.proxiedUsers).stream()
+                DatawaveUserDetails.orderProxiedUsers(this.proxiedUsers).stream()
                         .map(DatawaveUser::getAuths)
                         .collect(Collectors.toList()));
         // @formatter:on
@@ -128,7 +128,7 @@ public class ProxiedUserDetails implements ProxiedDatawaveUser, UserDetails {
     @Override
     public String[] getDNs() {
         // @formatter:off
-        return ProxiedUserDetails.orderProxiedUsers(this.proxiedUsers).stream()
+        return DatawaveUserDetails.orderProxiedUsers(this.proxiedUsers).stream()
                 .map(DatawaveUser::getDn)
                 .map(SubjectIssuerDNPair::subjectDN)
                 .toArray(String[]::new);
@@ -142,7 +142,7 @@ public class ProxiedUserDetails implements ProxiedDatawaveUser, UserDetails {
         if (o == null || getClass() != o.getClass())
             return false;
         
-        ProxiedUserDetails that = (ProxiedUserDetails) o;
+        DatawaveUserDetails that = (DatawaveUserDetails) o;
         
         if (!username.equals(that.username))
             return false;
@@ -161,7 +161,7 @@ public class ProxiedUserDetails implements ProxiedDatawaveUser, UserDetails {
         // @formatter:off
         return "ProxiedUserDetails{" +
                 "username='" + username + '\'' +
-                ", proxiedUsers=" + ProxiedUserDetails.orderProxiedUsers(proxiedUsers) +
+                ", proxiedUsers=" + DatawaveUserDetails.orderProxiedUsers(proxiedUsers) +
                 '}';
         // @formatter:on
     }

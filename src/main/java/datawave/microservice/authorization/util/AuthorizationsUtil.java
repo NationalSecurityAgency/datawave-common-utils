@@ -1,5 +1,16 @@
 package datawave.microservice.authorization.util;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import datawave.accumulo.util.security.UserAuthFunctions;
+import datawave.microservice.authorization.user.DatawaveUserDetails;
+import datawave.security.authorization.DatawaveUser;
+import datawave.security.util.AuthorizationsMinimizer;
+import org.apache.accumulo.core.security.Authorizations;
+import org.apache.commons.lang.StringUtils;
+
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,17 +21,6 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import datawave.accumulo.util.security.UserAuthFunctions;
-import datawave.security.authorization.DatawaveUser;
-import datawave.microservice.authorization.user.ProxiedUserDetails;
-import datawave.security.util.AuthorizationsMinimizer;
-import org.apache.accumulo.core.security.Authorizations;
-import org.apache.commons.lang.StringUtils;
 
 public class AuthorizationsUtil {
     
@@ -67,7 +67,7 @@ public class AuthorizationsUtil {
     
     /**
      * Retrieves a set of "downgraded" authorizations. This retrieves all authorizations from {@code principal} and intersects the user auths (the
-     * authorizations retrieved from {@code principal} for {@link ProxiedUserDetails#getPrimaryUser()}) with {@code requestedAuths}. All other entity auths
+     * authorizations retrieved from {@code principal} for {@link DatawaveUserDetails#getPrimaryUser()}) with {@code requestedAuths}. All other entity auths
      * retrieved from {@code principal}, if any, are included in the result set as is. If {@code requestedAuths} contains any authorizations that are not in the
      * user auths list, then an {@link IllegalArgumentException} is thrown.
      *
@@ -79,7 +79,7 @@ public class AuthorizationsUtil {
      * @return A set of {@link Authorizations}, one per entity represented in {@code principal}. The user's auths are replaced by {@code requestedAuths} so long
      *         as the user actually had all of the auths. If {@code requestedAuths} is {@code null}, then the user's auths are returned as-is.
      */
-    public static LinkedHashSet<Authorizations> getDowngradedAuthorizations(String requestedAuths, ProxiedUserDetails currentUser) {
+    public static LinkedHashSet<Authorizations> getDowngradedAuthorizations(String requestedAuths, DatawaveUserDetails currentUser) {
         
         final DatawaveUser primaryUser = currentUser.getPrimaryUser();
         UserAuthFunctions uaf = UserAuthFunctions.getInstance();
@@ -98,7 +98,7 @@ public class AuthorizationsUtil {
      *            the requested downgrade authorizations
      * @return requested, unless the user represented by {@code principal} does not have one or more of the auths in {@code requested}
      */
-    public static String downgradeUserAuths(ProxiedUserDetails currentUser, String requested) {
+    public static String downgradeUserAuths(DatawaveUserDetails currentUser, String requested) {
         if (requested == null || requested.trim().isEmpty()) {
             throw new IllegalArgumentException("Requested authorizations must not be empty");
         }
@@ -159,7 +159,7 @@ public class AuthorizationsUtil {
         return new Authorizations(b).toString();
     }
     
-    public static String buildUserAuthorizationString(ProxiedUserDetails currentUser) {
+    public static String buildUserAuthorizationString(DatawaveUserDetails currentUser) {
         String auths = "";
         if (currentUser != null) {
             auths = new Authorizations(currentUser.getPrimaryUser().getAuths().toArray(new String[0])).toString();
