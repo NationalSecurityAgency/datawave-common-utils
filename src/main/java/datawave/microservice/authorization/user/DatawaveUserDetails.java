@@ -44,6 +44,7 @@ public class DatawaveUserDetails implements ProxiedUserDetails, UserDetails {
     }
     
     @Override
+    @JsonIgnore
     public List<String> getProxyServers() {
         // @formatter:off
         List<String> proxyServers = orderProxiedUsers(this.proxiedUsers).stream()
@@ -57,6 +58,7 @@ public class DatawaveUserDetails implements ProxiedUserDetails, UserDetails {
     }
     
     @Override
+    @JsonIgnore
     public String getShortName() {
         return ProxiedEntityUtils.getShortName(getPrimaryUser().getName());
     }
@@ -116,6 +118,7 @@ public class DatawaveUserDetails implements ProxiedUserDetails, UserDetails {
     }
     
     @Override
+    @JsonIgnore
     public Collection<? extends Collection<String>> getAuthorizations() {
         // @formatter:off
         return Collections.unmodifiableCollection(
@@ -126,6 +129,7 @@ public class DatawaveUserDetails implements ProxiedUserDetails, UserDetails {
     }
     
     @Override
+    @JsonIgnore
     public String[] getDNs() {
         // @formatter:off
         return DatawaveUserDetails.orderProxiedUsers(this.proxiedUsers).stream()
