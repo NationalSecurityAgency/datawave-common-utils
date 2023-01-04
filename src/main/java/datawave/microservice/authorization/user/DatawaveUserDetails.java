@@ -59,6 +59,12 @@ public class DatawaveUserDetails implements ProxiedUserDetails, UserDetails {
     
     @Override
     @JsonIgnore
+    public String getName() {
+        return username;
+    }
+    
+    @Override
+    @JsonIgnore
     public String getShortName() {
         return ProxiedEntityUtils.getShortName(getPrimaryUser().getName());
     }
