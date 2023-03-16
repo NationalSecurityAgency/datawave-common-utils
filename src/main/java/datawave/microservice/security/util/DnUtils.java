@@ -1,11 +1,11 @@
 package datawave.microservice.security.util;
 
+import datawave.security.authorization.SubjectIssuerDNPair;
 import datawave.security.util.ProxiedEntityUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -34,14 +34,7 @@ public class DnUtils {
     }
     
     public Collection<String> buildNormalizedDNList(String subjectDN, String issuerDN, String proxiedSubjectDNs, String proxiedIssuerDNs) {
-        subjectDN = normalizeDN(subjectDN);
-        issuerDN = normalizeDN(issuerDN);
         List<String> dnList = new ArrayList<>();
-        HashSet<String> subjects = new HashSet<>();
-        String subject = subjectDN.replaceAll("(?<!\\\\)([<>])", "\\\\$1");
-        dnList.add(subject);
-        subjects.add(subject);
-        dnList.add(issuerDN.replaceAll("(?<!\\\\)([<>])", "\\\\$1"));
         if (proxiedSubjectDNs != null) {
             if (proxiedIssuerDNs == null)
                 throw new IllegalArgumentException("If proxied subject DNs are supplied, then issuer DNs must be supplied as well.");
@@ -52,18 +45,19 @@ public class DnUtils {
                                 + " vs " + Arrays.toString(issuerDNarray));
             for (int i = 0; i < subjectDNarray.length; ++i) {
                 subjectDNarray[i] = normalizeDN(subjectDNarray[i]);
-                if (!subjects.contains(subjectDNarray[i])) {
-                    issuerDNarray[i] = normalizeDN(issuerDNarray[i]);
-                    subjects.add(subjectDNarray[i]);
-                    dnList.add(subjectDNarray[i]);
-                    dnList.add(issuerDNarray[i]);
-                    if (issuerDNarray[i].equalsIgnoreCase(subjectDNarray[i]))
-                        throw new IllegalArgumentException("Subject DN " + issuerDNarray[i] + " was passed as an issuer DN.");
-                    if (subjectDnPattern.matcher(issuerDNarray[i]).find())
-                        throw new IllegalArgumentException("It appears that a subject DN (" + issuerDNarray[i] + ") was passed as an issuer DN.");
-                }
+                issuerDNarray[i] = normalizeDN(issuerDNarray[i]);
+                dnList.add(subjectDNarray[i]);
+                dnList.add(issuerDNarray[i]);
+                if (issuerDNarray[i].equalsIgnoreCase(subjectDNarray[i]))
+                    throw new IllegalArgumentException("Subject DN " + issuerDNarray[i] + " was passed as an issuer DN.");
+                if (subjectDnPattern.matcher(issuerDNarray[i]).find())
+                    throw new IllegalArgumentException("It appears that a subject DN (" + issuerDNarray[i] + ") was passed as an issuer DN.");
             }
         }
+        subjectDN = normalizeDN(subjectDN);
+        issuerDN = normalizeDN(issuerDN);
+        dnList.add(subjectDN.replaceAll("(?<!\\\\)([<>])", "\\\\$1"));
+        dnList.add(issuerDN.replaceAll("(?<!\\\\)([<>])", "\\\\$1"));
         return dnList;
     }
     
@@ -75,6 +69,19 @@ public class DnUtils {
             else
                 sb.append('<').append(escapedDN).append('>');
         }
+        return sb.toString();
+    }
+    
+    public static String buildNormalizedProxyDN(List<SubjectIssuerDNPair> dns) {
+        StringBuilder sb = new StringBuilder();
+        dns.stream().forEach(dn -> {
+            if (sb.length() == 0) {
+                sb.append(normalizeDN(dn.subjectDN()));
+            } else {
+                sb.append('<').append(normalizeDN(dn.subjectDN())).append('>');
+            }
+            sb.append('<').append(normalizeDN(dn.issuerDN())).append('>');
+        });
         return sb.toString();
     }
     
