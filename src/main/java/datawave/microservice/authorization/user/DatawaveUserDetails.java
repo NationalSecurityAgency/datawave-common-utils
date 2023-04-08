@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -36,6 +37,10 @@ public class DatawaveUserDetails implements ProxiedUserDetails, UserDetails {
         this.username = DatawaveUserDetails.orderProxiedUsers(this.proxiedUsers).stream().map(DatawaveUser::getName).collect(Collectors.joining(" -> "));
         this.roles = getPrimaryUser().getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
         this.creationTime = creationTime;
+    }
+    
+    public DatawaveUserDetails(Collection<? extends DatawaveUser> proxiedUsers) {
+        this(proxiedUsers, System.currentTimeMillis());
     }
     
     @Override
@@ -220,5 +225,10 @@ public class DatawaveUserDetails implements ProxiedUserDetails, UserDetails {
     
     public long getCreationTime() {
         return creationTime;
+    }
+    
+    @Override
+    public ProxiedUserDetails newInstance(List<DatawaveUser> proxiedUsers) {
+        return new DatawaveUserDetails(proxiedUsers);
     }
 }
