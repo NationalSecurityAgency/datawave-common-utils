@@ -228,7 +228,7 @@ public class AuthorizationsUtil {
      * @param proxiedUserDetails
      * @return The merge datawaveUserDetails
      */
-    public static <T extends ProxiedUserDetails> T mergeProxiedUserDetails(Function<List<DatawaveUser>,T> proxiedUserDetailsSupplier, T... proxiedUserDetails) {
+    public static <T extends ProxiedUserDetails> T mergeProxiedUserDetails(T... proxiedUserDetails) {
         T mergedProxiedUserDetails = null;
         for (T userDetails : proxiedUserDetails) {
             if (mergedProxiedUserDetails == null) {
@@ -258,7 +258,7 @@ public class AuthorizationsUtil {
                 // and create a merged datawaveUserDetails
                 List<DatawaveUser> mergedUsers = new ArrayList<>(users.values());
                 mergedUsers.addAll(extraProxies.values());
-                mergedProxiedUserDetails = proxiedUserDetailsSupplier.apply(mergedUsers);
+                mergedProxiedUserDetails = mergedProxiedUserDetails.newInstance(mergedUsers);
             }
         }
         return mergedProxiedUserDetails;
