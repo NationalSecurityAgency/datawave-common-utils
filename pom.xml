@@ -24,7 +24,7 @@
     </scm>
     <properties>
         <spotbugs.excludes.file>${project.basedir}/src/main/spotbugs/excludes.xml</spotbugs.excludes.file>
-        <version.guava>28.1-jre</version.guava>
+        <version.guava>32.0.0-jre</version.guava>
     </properties>
     <dependencyManagement>
         <dependencies>
