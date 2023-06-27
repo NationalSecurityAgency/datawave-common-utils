@@ -1,13 +1,13 @@
 package datawave.microservice.security.util;
 
-import datawave.security.authorization.SubjectIssuerDNPair;
-import datawave.security.util.ProxiedEntityUtils;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import datawave.security.authorization.SubjectIssuerDNPair;
+import datawave.security.util.ProxiedEntityUtils;
 
 public class DnUtils {
     
