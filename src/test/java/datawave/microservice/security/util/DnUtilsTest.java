@@ -1,14 +1,15 @@
 package datawave.microservice.security.util;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
-import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import com.google.common.collect.Lists;
 
 public class DnUtilsTest {
     
