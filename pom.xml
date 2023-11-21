@@ -8,7 +8,7 @@
         <relativePath>../../../microservices/microservice-parent/pom.xml</relativePath>
     </parent>
     <artifactId>common-utils</artifactId>
-    <version>2.0.1-SNAPSHOT</version>
+    <version>7-use-thread-safe-date-package</version>
     <url>https://code.nsa.gov/datawave-common-utils</url>
     <licenses>
         <license>

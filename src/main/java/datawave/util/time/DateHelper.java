@@ -340,4 +340,27 @@ public class DateHelper {
         }
         return date.toInstant().atZone(ZoneOffset.UTC).get(ChronoField.HOUR_OF_DAY) == hour;
     }
+    
+    public static String formatCustom(long inMillis, String pattern) {
+        return DateTimeFormatter.ofPattern(pattern).withZone(ZoneOffset.UTC).format(Instant.ofEpochMilli(inMillis));
+    }
+    
+    public static Date parseCustom(String date, String pattern) {
+        final String hourRegex = "(?i)(.*([kh]).*)";
+        
+        // handle a special case where the pattern in yyyyDDD bu the day of year is not zero padded
+        // i.e. 202311 should return Jan 11 2023
+        if ("yyyyDDD".equals(pattern) && "yyyyDDD".length() > date.length()) {
+            pattern = "yyyy D";
+            date = (date.length() > 5) ? new StringBuilder(date).insert(4, " ").toString() : date;
+        }
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern).withZone(ZoneOffset.UTC);
+        
+        if (pattern.matches(hourRegex)) {
+            return Date.from(ZonedDateTime.parse(date, formatter).toInstant());
+        } else {
+            return Date.from(LocalDate.parse(date, formatter).atStartOfDay(formatter.getZone()).toInstant());
+        }
+    }
 }
