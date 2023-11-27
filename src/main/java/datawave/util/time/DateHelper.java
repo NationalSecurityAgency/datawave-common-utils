@@ -5,10 +5,13 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Locale;
+
+import org.apache.log4j.Logger;
 
 /**
  * This class validates date ranges and converts Date objects to and from Strings in yyyyMMdd format in a way that is not dependent on local settings or
@@ -16,6 +19,8 @@ import java.util.Locale;
  * the webservice in a Query object into yyyyMMdd strings for sending to Accumulo as part of the rowId for the range.
  */
 public class DateHelper {
+    
+    private static Logger log = Logger.getLogger(DateHelper.class);
     
     public static final Date MIN_SUPPORTED_DATE = new Date(-62135596800000L); // one millisecond after 0000/12/31; 0001/01/01Z
     public static final Date MAX_SUPPORTED_DATE = new Date(253402300799999L); // one millisecond before 10000/01/01; 9999/12/31Z
@@ -156,10 +161,15 @@ public class DateHelper {
      */
     private static Date lenientParseHelper(String date, DateTimeFormatter parser, String formatStr, boolean hasTime) {
         String lenientDate = convertToLenient(date, formatStr);
-        if (hasTime) {
-            return Date.from(ZonedDateTime.parse(lenientDate, parser).toInstant());
-        } else {
-            return Date.from(LocalDate.parse(lenientDate, parser).atStartOfDay(parser.getZone()).toInstant());
+        try {
+            if (hasTime) {
+                return Date.from(ZonedDateTime.parse(lenientDate, parser).toInstant());
+            } else {
+                return Date.from(LocalDate.parse(lenientDate, parser).atStartOfDay(parser.getZone()).toInstant());
+            }
+        } catch (DateTimeParseException e) {
+            log.warn(e.getMessage());
+            throw e;
         }
     }
     
@@ -213,7 +223,12 @@ public class DateHelper {
      * @return the {@code Date} object
      */
     public static Date parse8601(String date) {
-        return Date.from(ZonedDateTime.parse(date, DTF_8601).toInstant());
+        try {
+            return Date.from(ZonedDateTime.parse(date, DTF_8601).toInstant());
+        } catch (DateTimeParseException e) {
+            log.warn(e.getMessage());
+            throw e;
+        }
     }
     
     /**
@@ -357,10 +372,15 @@ public class DateHelper {
         
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern).withZone(ZoneOffset.UTC);
         
-        if (pattern.matches(hourRegex)) {
-            return Date.from(ZonedDateTime.parse(date, formatter).toInstant());
-        } else {
-            return Date.from(LocalDate.parse(date, formatter).atStartOfDay(formatter.getZone()).toInstant());
+        try {
+            if (pattern.matches(hourRegex)) {
+                return Date.from(ZonedDateTime.parse(date, formatter).toInstant());
+            } else {
+                return Date.from(LocalDate.parse(date, formatter).atStartOfDay(formatter.getZone()).toInstant());
+            }
+        } catch (DateTimeParseException e) {
+            log.warn(e.getMessage());
+            throw e;
         }
     }
 }
