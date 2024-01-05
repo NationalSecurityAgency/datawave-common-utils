@@ -121,47 +121,47 @@ public class DateHelperTest {
         // noinspection ConstantConditions
         assertThrows(NullPointerException.class, () -> DateHelper.format(null));
     }
-
+    
     @Test
     public void testCustomParse() throws ParseException {
         String date = "20091231 000001_11";
         String pattern = "yyyyMMdd HHmmss";
-
+        
         testCustomParse(date, pattern);
     }
-
+    
     @Test
     public void testCustomParseYearAndDayOfYear() throws ParseException {
         String date = "2023001";
         String pattern = "yyyyDDD";
-
+        
         testCustomParse(date, pattern);
     }
-
+    
     @Test
     public void testCustomParseYearMonthDate() throws ParseException {
         String date = "2023-01-01";
         String pattern = "yyyy-MM-dd";
-
+        
         testCustomParse(date, pattern);
     }
-
+    
     @Test
     public void testCustomParseYearAndDayOfYearNoPad() throws ParseException {
         String date = "202311";
         String pattern = "yyyyDDD";
-
+        
         testCustomParse(date, pattern);
     }
-
+    
     private void testCustomParse(String date, String pattern) throws ParseException {
         AtomicLong actual = new AtomicLong(Long.MIN_VALUE);
         assertDoesNotThrow((() -> actual.set(DateHelper.parseCustom(date, pattern).getTime())));
-
+        
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         sdf.setTimeZone(TimeZone.getTimeZone(ZoneOffset.UTC));
         long expected = sdf.parse(date).getTime();
-
+        
         assertEquals(expected, actual.get());
     }
 }
