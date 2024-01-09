@@ -49,10 +49,10 @@ public class DateHelper {
     
     public static final String DATE_FORMAT_REMOVE_CONSTANT = "yyyyMMddHHmmss.SSS";
     private static final DateTimeFormatter DTF_Remove = DateTimeFormatter.ofPattern(DATE_FORMAT_REMOVE_CONSTANT).withZone(ZoneOffset.UTC);
-
+    
     private static final String hourRegex = "(?i)(.*([kh]).*)";
     private static final Matcher hourMatcher = Pattern.compile(hourRegex).matcher("");
-
+    
     /**
      * Return a string representing the given date in yyyyMMdd format in a consistent way not dependent on local settings for calendar, timezone, or locale by
      * using Zulu timezone and US locale.
