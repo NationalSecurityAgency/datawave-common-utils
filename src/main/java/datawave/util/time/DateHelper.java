@@ -10,6 +10,8 @@ import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
@@ -47,7 +49,10 @@ public class DateHelper {
     
     public static final String DATE_FORMAT_REMOVE_CONSTANT = "yyyyMMddHHmmss.SSS";
     private static final DateTimeFormatter DTF_Remove = DateTimeFormatter.ofPattern(DATE_FORMAT_REMOVE_CONSTANT).withZone(ZoneOffset.UTC);
-    
+
+    private static final String hourRegex = "(?i)(.*([kh]).*)";
+    private static final Matcher hourMatcher = Pattern.compile(hourRegex).matcher("");
+
     /**
      * Return a string representing the given date in yyyyMMdd format in a consistent way not dependent on local settings for calendar, timezone, or locale by
      * using Zulu timezone and US locale.
@@ -210,7 +215,6 @@ public class DateHelper {
                 return Date.from(LocalDate.parse(lenientDate, parser).atStartOfDay(parser.getZone()).toInstant());
             }
         } catch (DateTimeParseException e) {
-            log.warn(e.getMessage());
             throw e;
         }
     }
@@ -295,8 +299,6 @@ public class DateHelper {
      * @return the {@code Date} object
      */
     public static Date parseCustom(String date, String pattern) {
-        final String hourRegex = "(?i)(.*([kh]).*)";
-        
         // handle a special case where the pattern in yyyyDDD but the day of year is not zero padded
         // i.e. 202311 should return Jan 11 2023
         // also assumes date is not a lenient date
@@ -309,7 +311,7 @@ public class DateHelper {
         
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern).withZone(ZoneOffset.UTC);
         
-        return lenientParseHelper(date, formatter, pattern, pattern.matches(hourRegex));
+        return lenientParseHelper(date, formatter, pattern, hourMatcher.reset(pattern).matches());
     }
     
     /**
