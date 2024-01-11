@@ -12,16 +12,12 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
-
 /**
  * This class validates date ranges and converts Date objects to and from Strings in yyyyMMdd format in a way that is not dependent on local settings or
  * calendar, timezone, or locale by always using the Zulu timezone and US locale. This class is useful, for example, for converting Date objects received from
  * the webservice in a Query object into yyyyMMdd strings for sending to Accumulo as part of the rowId for the range.
  */
 public class DateHelper {
-    
-    private static Logger log = Logger.getLogger(DateHelper.class);
     
     public static final Date MIN_SUPPORTED_DATE = new Date(-62135596800000L); // one millisecond after 0000/12/31; 0001/01/01Z
     public static final Date MAX_SUPPORTED_DATE = new Date(253402300799999L); // one millisecond before 10000/01/01; 9999/12/31Z
@@ -271,7 +267,6 @@ public class DateHelper {
         try {
             return Date.from(ZonedDateTime.parse(date, DTF_8601).toInstant());
         } catch (DateTimeParseException e) {
-            log.warn(e.getMessage());
             throw e;
         }
     }
