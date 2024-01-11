@@ -50,8 +50,8 @@ public class DateHelper {
     public static final String DATE_FORMAT_REMOVE_CONSTANT = "yyyyMMddHHmmss.SSS";
     private static final DateTimeFormatter DTF_Remove = DateTimeFormatter.ofPattern(DATE_FORMAT_REMOVE_CONSTANT).withZone(ZoneOffset.UTC);
     
-    private static final String hourRegex = "(?i)(.*([kh]).*)";
-    private static final Matcher hourMatcher = Pattern.compile(hourRegex).matcher("");
+    private static final String HOUR_REGEX = "(?i)(.*([kh]).*)";
+    private static final Pattern HOUR_PATTERN = Pattern.compile(HOUR_REGEX);
     
     /**
      * Return a string representing the given date in yyyyMMdd format in a consistent way not dependent on local settings for calendar, timezone, or locale by
@@ -311,7 +311,7 @@ public class DateHelper {
         
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern).withZone(ZoneOffset.UTC);
         
-        return lenientParseHelper(date, formatter, pattern, hourMatcher.reset(pattern).matches());
+        return lenientParseHelper(date, formatter, pattern, HOUR_PATTERN.matcher(pattern).matches());
     }
     
     /**
