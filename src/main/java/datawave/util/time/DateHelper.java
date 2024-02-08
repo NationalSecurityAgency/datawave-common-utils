@@ -5,10 +5,12 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 /**
  * This class validates date ranges and converts Date objects to and from Strings in yyyyMMdd format in a way that is not dependent on local settings or
@@ -37,8 +39,14 @@ public class DateHelper {
     public static final String DATE_FORMAT_STRING_TO_SECONDS = "yyyyMMddHHmmss";
     private static final DateTimeFormatter DTF_Seconds = DateTimeFormatter.ofPattern(DATE_FORMAT_STRING_TO_SECONDS).withZone(ZoneOffset.UTC);
     
-    public static final String DATE_FORMAT_STRING_8601 = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    public static final String DATE_FORMAT_STRING_8601 = "yyyy-MM-dd'T'HH:mm:ss[.SSS]['Z']";
     private static final DateTimeFormatter DTF_8601 = DateTimeFormatter.ofPattern(DATE_FORMAT_STRING_8601).withZone(ZoneOffset.UTC);
+    
+    public static final String DATE_FORMAT_REMOVE_CONSTANT = "yyyyMMddHHmmss.SSS";
+    private static final DateTimeFormatter DTF_Remove = DateTimeFormatter.ofPattern(DATE_FORMAT_REMOVE_CONSTANT).withZone(ZoneOffset.UTC);
+    
+    private static final String HOUR_REGEX = "(?i)(.*([kh]).*)";
+    private static final Pattern HOUR_PATTERN = Pattern.compile(HOUR_REGEX);
     
     /**
      * Return a string representing the given date in yyyyMMdd format in a consistent way not dependent on local settings for calendar, timezone, or locale by
@@ -130,6 +138,45 @@ public class DateHelper {
     }
     
     /**
+     * Return a string representing the given date in yyyyMMddHHmmss.SSS format in a consistent way not dependent on local settings for calendar, timezone, or
+     * locale by using Zulu timezone and US locale.
+     *
+     * @param date
+     * @return the formatted date
+     */
+    public static String formatRemove(Date date) {
+        return DTF_Remove.format(date.toInstant());
+    }
+    
+    /**
+     * Return a string representing the given long representation of date in simple pattern of letters and symbols described in DateTimeFormatter class
+     * documentation in a consistent way not dependent on local settings for calendar, timezone, or locale by using Zulu timezone and US locale.
+     * 
+     * @see DateTimeFormatter
+     *
+     * @param inMillis
+     * @param pattern
+     * @return the formatted date
+     */
+    public static String formatCustom(long inMillis, String pattern) {
+        return DateTimeFormatter.ofPattern(pattern).withZone(ZoneOffset.UTC).format(Instant.ofEpochMilli(inMillis));
+    }
+    
+    /**
+     * Return a string representing the given date in simple pattern of letters and symbols described in DateTimeFormatter class documentation in a consistent
+     * way not dependent on local settings for calendar, timezone, or locale by using Zulu timezone and US locale.
+     * 
+     * @see DateTimeFormatter
+     *
+     * @param date
+     * @param pattern
+     * @return the formatted date
+     */
+    public static String formatCustom(Date date, String pattern) {
+        return DateTimeFormatter.ofPattern(pattern).withZone(ZoneOffset.UTC).format(date.toInstant());
+    }
+    
+    /**
      * Converts a String in yyyyMMdd format to a Date object in a consistent way not dependent on local settings for calendar, timezone, or locale by using Zulu
      * timezone and US locale.
      * 
@@ -156,10 +203,14 @@ public class DateHelper {
      */
     private static Date lenientParseHelper(String date, DateTimeFormatter parser, String formatStr, boolean hasTime) {
         String lenientDate = convertToLenient(date, formatStr);
-        if (hasTime) {
-            return Date.from(ZonedDateTime.parse(lenientDate, parser).toInstant());
-        } else {
-            return Date.from(LocalDate.parse(lenientDate, parser).atStartOfDay(parser.getZone()).toInstant());
+        try {
+            if (hasTime) {
+                return Date.from(ZonedDateTime.parse(lenientDate, parser).toInstant());
+            } else {
+                return Date.from(LocalDate.parse(lenientDate, parser).atStartOfDay(parser.getZone()).toInstant());
+            }
+        } catch (DateTimeParseException e) {
+            throw e;
         }
     }
     
@@ -213,7 +264,48 @@ public class DateHelper {
      * @return the {@code Date} object
      */
     public static Date parse8601(String date) {
-        return Date.from(ZonedDateTime.parse(date, DTF_8601).toInstant());
+        try {
+            return Date.from(ZonedDateTime.parse(date, DTF_8601).toInstant());
+        } catch (DateTimeParseException e) {
+            throw e;
+        }
+    }
+    
+    /**
+     * Converts a String in yyyyMMddHHmmss.SSS format to a Date object in a consistent way not dependent on local settings for calendar, timezone, or locale by
+     * using Zulu timezone and US locale.
+     *
+     * @param date
+     * @return the {@code Date} object
+     */
+    public static Date parseRemove(String date) {
+        return lenientParseHelper(date, DTF_Remove, DATE_FORMAT_REMOVE_CONSTANT, true);
+    }
+    
+    /**
+     * Converts a String in simple pattern of letters and symbols described in DateTimeFormatter class documentation to a Date object in a consistent way not
+     * dependent on local settings for calendar, timezone, or locale by using Zulu timezone and US locale.
+     * 
+     * @see DateTimeFormatter
+     *
+     * @param date
+     * @param pattern
+     * @return the {@code Date} object
+     */
+    public static Date parseCustom(String date, String pattern) {
+        // handle a special case where the pattern in yyyyDDD but the day of year is not zero padded
+        // i.e. 202311 should return Jan 11 2023
+        // also assumes date is not a lenient date
+        if ("yyyyDDD".equals(pattern) && "yyyyDDD".length() > date.length()) {
+            pattern = "yyyy D";
+            date = (date.length() > 5) ? new StringBuilder(date).insert(4, " ").toString() : date;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern).withZone(ZoneOffset.UTC);
+            return Date.from(LocalDate.parse(date, formatter).atStartOfDay(formatter.getZone()).toInstant());
+        }
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern).withZone(ZoneOffset.UTC);
+        
+        return lenientParseHelper(date, formatter, pattern, HOUR_PATTERN.matcher(pattern).matches());
     }
     
     /**
