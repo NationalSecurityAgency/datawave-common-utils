@@ -39,7 +39,7 @@ public class DateHelper {
     public static final String DATE_FORMAT_STRING_TO_SECONDS = "yyyyMMddHHmmss";
     private static final DateTimeFormatter DTF_Seconds = DateTimeFormatter.ofPattern(DATE_FORMAT_STRING_TO_SECONDS).withZone(ZoneOffset.UTC);
     
-    public static final String DATE_FORMAT_STRING_8601 = "yyyy-MM-dd'T'HH:mm:ss[.SSS]['Z']";
+    public static final String DATE_FORMAT_STRING_8601 = "yyyy-MM-dd'T'HH:mm:ss'Z'";
     private static final DateTimeFormatter DTF_8601 = DateTimeFormatter.ofPattern(DATE_FORMAT_STRING_8601).withZone(ZoneOffset.UTC);
     
     public static final String DATE_FORMAT_REMOVE_CONSTANT = "yyyyMMddHHmmss.SSS";
