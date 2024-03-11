@@ -42,8 +42,8 @@ public class DateHelper {
     public static final String DATE_FORMAT_STRING_8601 = "yyyy-MM-dd'T'HH:mm:ss'Z'";
     private static final DateTimeFormatter DTF_8601 = DateTimeFormatter.ofPattern(DATE_FORMAT_STRING_8601).withZone(ZoneOffset.UTC);
     
-    public static final String DATE_FORMAT_STRING_8601_ALT = "yyyy-MM-dd'T'HH:mm:ss[.SSS]['Z']";
-    private static final DateTimeFormatter DTF_8601_ALT = DateTimeFormatter.ofPattern(DATE_FORMAT_STRING_8601).withZone(ZoneOffset.UTC);
+    public static final String DATE_FORMAT_STRING_8601_ALT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    private static final DateTimeFormatter DTF_8601_ALT = DateTimeFormatter.ofPattern(DATE_FORMAT_STRING_8601_ALT).withZone(ZoneOffset.UTC);
     public static final String DATE_FORMAT_REMOVE_CONSTANT = "yyyyMMddHHmmss.SSS";
     private static final DateTimeFormatter DTF_Remove = DateTimeFormatter.ofPattern(DATE_FORMAT_REMOVE_CONSTANT).withZone(ZoneOffset.UTC);
     
