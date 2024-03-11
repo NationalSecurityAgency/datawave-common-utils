@@ -42,6 +42,8 @@ public class DateHelper {
     public static final String DATE_FORMAT_STRING_8601 = "yyyy-MM-dd'T'HH:mm:ss'Z'";
     private static final DateTimeFormatter DTF_8601 = DateTimeFormatter.ofPattern(DATE_FORMAT_STRING_8601).withZone(ZoneOffset.UTC);
     
+    public static final String DATE_FORMAT_STRING_8601_ALT = "yyyy-MM-dd'T'HH:mm:ss[.SSS]['Z']";
+    private static final DateTimeFormatter DTF_8601_ALT = DateTimeFormatter.ofPattern(DATE_FORMAT_STRING_8601).withZone(ZoneOffset.UTC);
     public static final String DATE_FORMAT_REMOVE_CONSTANT = "yyyyMMddHHmmss.SSS";
     private static final DateTimeFormatter DTF_Remove = DateTimeFormatter.ofPattern(DATE_FORMAT_REMOVE_CONSTANT).withZone(ZoneOffset.UTC);
     
@@ -266,6 +268,30 @@ public class DateHelper {
     public static Date parse8601(String date) {
         try {
             return Date.from(ZonedDateTime.parse(date, DTF_8601).toInstant());
+        } catch (DateTimeParseException e) {
+            throw e;
+        }
+    }
+    
+    /**
+     * Return a string representing the given date in 8601 format
+     *
+     * @param date
+     * @return the formatted date
+     */
+    public static String format8601Alt(Date date) {
+        return DTF_8601_ALT.format(date.toInstant());
+    }
+    
+    /**
+     * Converts a String in 8601 format to a Date object
+     *
+     * @param date
+     * @return the {@code Date} object
+     */
+    public static Date parse8601Alt(String date) {
+        try {
+            return Date.from(ZonedDateTime.parse(date, DTF_8601_ALT).toInstant());
         } catch (DateTimeParseException e) {
             throw e;
         }
