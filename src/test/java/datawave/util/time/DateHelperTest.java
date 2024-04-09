@@ -1,15 +1,18 @@
 package datawave.util.time;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.jupiter.api.Test;
 
@@ -121,5 +124,48 @@ public class DateHelperTest {
     public void testDateHelperFormat() {
         // noinspection ConstantConditions
         assertThrows(NullPointerException.class, () -> DateHelper.format(null));
+    }
+    
+    @Test
+    public void testCustomParse() throws ParseException {
+        String date = "20091231 000001_11";
+        String pattern = "yyyyMMdd HHmmss";
+        
+        testCustomParse(date, pattern);
+    }
+    
+    @Test
+    public void testCustomParseYearAndDayOfYear() throws ParseException {
+        String date = "2023001";
+        String pattern = "yyyyDDD";
+        
+        testCustomParse(date, pattern);
+    }
+    
+    @Test
+    public void testCustomParseYearMonthDate() throws ParseException {
+        String date = "2023-01-01";
+        String pattern = "yyyy-MM-dd";
+        
+        testCustomParse(date, pattern);
+    }
+    
+    @Test
+    public void testCustomParseYearAndDayOfYearNoPad() throws ParseException {
+        String date = "202311";
+        String pattern = "yyyyDDD";
+        
+        testCustomParse(date, pattern);
+    }
+    
+    private void testCustomParse(String date, String pattern) throws ParseException {
+        AtomicLong actual = new AtomicLong(Long.MIN_VALUE);
+        assertDoesNotThrow((() -> actual.set(DateHelper.parseCustom(date, pattern).getTime())));
+        
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        sdf.setTimeZone(TimeZone.getTimeZone(ZoneOffset.UTC));
+        long expected = sdf.parse(date).getTime();
+        
+        assertEquals(expected, actual.get());
     }
 }
