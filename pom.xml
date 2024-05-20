@@ -4,7 +4,7 @@
     <parent>
         <groupId>gov.nsa.datawave.microservice</groupId>
         <artifactId>datawave-microservice-parent</artifactId>
-        <version>4.0.0-SNAPSHOT</version>
+        <version>4.0.0</version>
         <relativePath>../../../microservices/microservice-parent/pom.xml</relativePath>
     </parent>
     <artifactId>common-utils</artifactId>
@@ -25,7 +25,7 @@
     <properties>
         <spotbugs.excludes.file>${project.basedir}/src/main/spotbugs/excludes.xml</spotbugs.excludes.file>
         <version.guava>28.1-jre</version.guava>
-        <version.microservice.accumulo-utils>4.0.0-SNAPSHOT</version.microservice.accumulo-utils>
+        <version.microservice.accumulo-utils>4.0.0</version.microservice.accumulo-utils>
         <version.spring-security-core>5.7.2</version.spring-security-core>
     </properties>
     <dependencyManagement>
